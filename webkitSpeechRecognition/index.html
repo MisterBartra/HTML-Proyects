@@ -147,40 +147,45 @@
 	let select_language = document.querySelector('#select_language');
 	let select_dialect = document.querySelector('#select_dialect');
 
+	// Poblar el select_language con los idiomas
 	for (var i = 0; i < langs.length; i++) {
 	  select_language.options[i] = new Option(langs[i][0], i);
 	}
-	
-	// Obtener parámetro de dialecto desde la URL
+
+	// Obtener el parámetro de dialecto desde la URL
 	const urlParams = new URLSearchParams(window.location.search);
 	const dialectParam = urlParams.get('dl'); // Dialecto
 
-	// Encontrar el idioma y seleccionar automáticamente
-	let select_language.selectedIndex = 7; // Predeterminado al primero si no se encuentra
+	// Predeterminar idioma y dialecto si no hay parámetros
+	select_language.selectedIndex = 7; // Idioma predeterminado (Español)
 	updateCountry();
-	let select_dialect.selectedIndex = 11;
+	select_dialect.selectedIndex = 11; // Dialecto predeterminado (primero en la lista)
 
-	langs.forEach((lang, langIndex) => {
-	  const dialectIndex = lang.slice(1).findIndex(dialect => dialect[0] === dialectParam);
-	  if (dialectIndex !== -1) {
-		select_language.selectedIndex = langIndex; // Índice del idioma
-		updateCountry();
-		select_dialect.selectedIndex = dialectIndex; // Índice del dialecto
-	  }
-	});
+	// Buscar el idioma y el dialecto correspondientes si el parámetro existe
+	if (dialectParam) {
+	  langs.forEach((lang, langIndex) => {
+		const dialectIndex = lang.slice(1).findIndex(dialect => dialect[0] === dialectParam);
+		if (dialectIndex !== -1) {
+		  select_language.selectedIndex = langIndex; // Seleccionar el idioma correspondiente
+		  updateCountry(); // Actualizar dialectos antes de seleccionarlo
+		  select_dialect.selectedIndex = dialectIndex; // Seleccionar dialecto correspondiente
+		}
+	  });
+	}
 
+	// Función para actualizar los dialectos del idioma seleccionado
 	function updateCountry() {
-	  // Eliminar las opciones existentes del select_dialect
-	  select_dialect.innerHTML = ''; // Más simple que remover elementos uno por uno
+	  // Eliminar las opciones existentes en select_dialect
+	  select_dialect.innerHTML = '';
 
 	  // Obtener la lista de dialectos del idioma seleccionado
 	  const list = langs[select_language.selectedIndex];
-	  
-	  // Agregar nuevas opciones de dialectos al select_dialect
+
+	  // Agregar nuevas opciones al select_dialect
 	  for (let i = 1; i < list.length; i++) {
 		select_dialect.options.add(new Option(list[i][1], list[i][0]));
 	  }
-	  
+
 	  // Mostrar u ocultar el select_dialect según las opciones disponibles
 	  select_dialect.style.visibility = list.length > 1 ? 'visible' : 'hidden';
 	}
